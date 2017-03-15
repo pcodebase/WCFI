@@ -1,0 +1,26 @@
+<ion-modal-view>
+    <ion-header-bar>
+        <h1 class="title">Service Details</h1>
+        <div class="buttons">
+            <!--button class="button button-clear" ng-click="closeLogin()">Close</button-->
+            <img src="img/close.png" height="30px" width="30px" ng-click="closeServiceDetails()">
+        </div>
+    </ion-header-bar>
+    <ion-content>
+        <form ng-submit="updateService()">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">Id</span>
+                    <input type="text" ng-model="requestId">
+                </label>
+
+                <label class="item">
+                    <center>
+                    <button class="button button-balanced" type="submit">Save</button>
+                    <button class="button button-energized">Cancel</button>
+                    </center>
+                </label>
+            </div>
+        </form>
+    </ion-content>
+</ion-modal-view>

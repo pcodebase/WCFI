@@ -130,4 +130,103 @@ angular.module('starter.controllers', [])
         enableAlerts: false,
         enableLocation: true
     };
-});
+})
+
+.controller('ServicesCtrl', function($scope, $rootScope, $stateParams, $timeout, DBFactory) {
+    $scope.serviceDtTm = "01/04/2017 10:00";
+    $scope.services = ["Electrician", "Painter", "Plumber", "Gardener"];
+    $scope.providers = [];
+
+
+    $scope.filterProviders = function(serviceType) {
+        DBFactory.listProviders(serviceType).then(function(providers) {
+            $scope.providers = [];
+            for (var i = 0; i < providers.length; ++i) {
+                $scope.providers.push({
+                    "username": providers[i].username,
+                    "name": providers[i].name,
+                    "role": providers[i].role,
+                    "phoneNo": providers[i].phoneNo,
+                    "specialization": providers[i].specialization
+                });
+            }
+        });
+    };
+
+    $scope.placeRequest = function(type, provider, dateTime, comments) {
+        var request = {
+            "type": type,
+            "provider": provider,
+            "consumer": $rootScope.loggedIn.username,
+            "dateTime": dateTime,
+            "comments": comments
+        }
+        console.log(JSON.stringify(request));
+        $timeout(function() {
+            console.log(JSON.stringify(request));
+            DBFactory.addRequest(request);
+            //$scope.closeRegistration();
+        }, 500);
+    };
+})
+
+.controller('ConRequestsCtrl', function($scope, $rootScope, $stateParams, $timeout, DBFactory) {
+    $scope.myRequests = [];
+    DBFactory.listConRequests($rootScope.loggedIn.username).then(function(conRequests) {
+        for (var i = 0; i < conRequests.length; ++i) {
+            $scope.myRequests.push({
+                "id": conRequests[i].id,
+                "provider": conRequests[i].provider,
+                "consumer": conRequests[i].consumer,
+                "type": conRequests[i].type,
+                "dateTime": conRequests[i].dateTime,
+                "comments": conRequests[i].comments,
+                "status": conRequests[i].status,
+                "fees": conRequests[i].fees
+            });
+        }
+    });
+})
+
+.controller('ProRequestsCtrl', function($scope, $rootScope, $stateParams, $timeout, $ionicModal, DBFactory) {
+    $scope.myRequests = [];
+    DBFactory.listProRequests($rootScope.loggedIn.username).then(function(proRequests) {
+        for (var i = 0; i < proRequests.length; ++i) {
+            $scope.myRequests.push({
+                "id": proRequests[i].id,
+                "provider": proRequests[i].provider,
+                "consumer": proRequests[i].consumer,
+                "type": proRequests[i].type,
+                "dateTime": proRequests[i].dateTime,
+                "comments": proRequests[i].comments,
+                "status": proRequests[i].status,
+                "fees": proRequests[i].fees
+            });
+        }
+    });
+
+    $ionicModal.fromTemplateUrl('templates/servicedetails.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.serviceModal = modal;
+    });
+
+    $scope.showServiceDetails = function(id) {
+        $scope.requestId = id;
+        $scope.serviceModal.show();
+    };
+
+    $scope.closeServiceDetails = function() {
+        $scope.serviceModal.hide();
+    };
+
+    $scope.updateService = function() {
+        $timeout(function() {
+            $scope.closeServiceDetails();
+        }, 500);
+    };
+})
+
+.controller('AlertsCtrl', function() {
+
+})

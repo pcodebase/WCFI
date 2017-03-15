@@ -1,15 +1,18 @@
-<ion-view view-title="Account">
+<ion-view view-title="My Requests">
     <ion-content>
-        <div class="list">
-            <a class="item item-icon-left" href="#">
-                Req 1
-            </a>
-            <a class="item item-icon-left" href="#">
-                Req 2
-            </a>
-            <a class="item item-icon-left" href="#">
-                Req 3
-            </a>
+        <div class="list card" ng-repeat="request in myRequests">
+            <div class="item item-avatar">
+                <img src="img/user_x.png">
+                <h2>{{request.provider}}</h2>
+                <p>{{request.dateTime}}</p>
+            </div>
+            <div class="item item-body">
+                <p>{{request.comments}}</p>
+                <p>
+                    <a href="#" class="subdued">{{request.status}}</a>
+                    <a href="#" class="subdued">Paid Amount: {{request.fees}}</a>
+                </p>
+            </div>
         </div>
     </ion-content>
 </ion-view>

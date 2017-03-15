@@ -1,18 +1,32 @@
-<ion-view view-title="Account">
+<ion-view view-title="Services">
     <ion-content>
+        <center>
+            <h4>Request a Service</h4>
+        </center>
         <div class="list">
-            <a class="item item-icon-left" href="#">
-                Electrician
-            </a>
-            <a class="item item-icon-left" href="#">
-                Painter
-            </a>
-            <a class="item item-icon-left" href="#">
-                Plumber
-            </a>
-            <a class="item item-icon-left" href="#">
-                Gardener
-            </a>
+            <label class="item item-input item-select">
+                <div class="input-label">Service Type</div>
+                <select ng-model="serviceType" ng-change="filterProviders(serviceType)">
+                    <option ng-repeat="service in services" value="{{service}}">{{service}}</option>
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">Service Providers</div>
+                <select ng-model="serviceProvider">
+                    <option ng-repeat="provider in providers" value="{{provider.username}}">{{provider.name}}</option>
+                </select>
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Date/Time</span>
+                <input type="text" ng-model="serviceDtTm" placeholder="MM/DD/YYYY HH:MM">
+            </label>
+            <label class="item item-input">
+                <span class="input-label">Comments</span>
+                <textArea rows="3" ng-model="comments"></textarea>
+            </label>
+            <label class="item">
+                <button class="button button-block button-balanced" ng-click="placeRequest(serviceType, serviceProvider, serviceDtTm, comments)">Place Request</button>
+            </label>
         </div>
     </ion-content>
 </ion-view>

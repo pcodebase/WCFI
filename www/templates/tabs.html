@@ -13,11 +13,11 @@ navigation history that also transitions its views in and out.
         <ion-nav-view name="tab-pronewservice"></ion-nav-view>
     </ion-tab>
 
-    <ion-tab title="My Requests" icon-off="ion-checkmark" icon-on="ion-checkmark" href="#/tab/prorequests" ng-if="loggedIn.role=='Provider'">
+    <ion-tab title="Service Requests" icon-off="ion-checkmark" icon-on="ion-checkmark" href="#/tab/prorequests" ng-if="loggedIn.role=='Provider'">
         <ion-nav-view name="tab-prorequests"></ion-nav-view>
     </ion-tab>
 
-    <ion-tab title="Services" icon-off="ion-map" icon-on="ion-map" href="#/tab/services" ng-if="loggedIn.role=='Consumer'">
+    <ion-tab title="New Request" icon-off="ion-map" icon-on="ion-map" href="#/tab/services" ng-if="loggedIn.role=='Consumer'">
         <ion-nav-view name="tab-services"></ion-nav-view>
     </ion-tab>
 
