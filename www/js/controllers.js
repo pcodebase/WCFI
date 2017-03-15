@@ -170,7 +170,7 @@ angular.module('starter.controllers', [])
     };
 })
 
-.controller('ConRequestsCtrl', function($scope, $rootScope, $stateParams, $timeout, DBFactory) {
+.controller('ConRequestsCtrl', function($scope, $rootScope, $stateParams, $timeout, $ionicModal, DBFactory) {
     $scope.myRequests = [];
     DBFactory.listConRequests($rootScope.loggedIn.username).then(function(conRequests) {
         for (var i = 0; i < conRequests.length; ++i) {
@@ -186,6 +186,52 @@ angular.module('starter.controllers', [])
             });
         }
     });
+
+    $ionicModal.fromTemplateUrl('templates/servicedetails.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.serviceModal = modal;
+    });
+
+    $scope.showServiceDetails = function(id) {
+        DBFactory.getRequest(id).then(function(request) {
+            if (request != null) {
+                $scope.request = {
+                    "id": request.id,
+                    "provider": request.provider,
+                    "consumer": request.consumer,
+                    "fees": request.fees,
+                    "paid": request.paid,
+                    "received": request.received,
+                    "status": request.status,
+                    "dateTime": request.dateTime,
+                    "comments": request.comments
+                };
+                $scope.serviceModal.show();
+            }
+        });
+    };
+
+    $scope.closeServiceDetails = function() {
+        $scope.serviceModal.hide();
+    };
+
+    $scope.updateService = function() {
+        $timeout(function() {
+            var paid = $scope.request.paid;
+            var received = $scope.request.received;
+            if ($scope.request.payment == "paid") {
+                paid = 1;
+            }
+            if ($scope.request.payment == "received") {
+                received = 1;
+            }
+            DBFactory.updateRequest($scope.request.id, $scope.request.status, $scope.request.fees, paid, received).then(function() {
+                $scope.closeServiceDetails();
+            });
+        }, 500);
+    };
+
 })
 
 .controller('ProRequestsCtrl', function($scope, $rootScope, $stateParams, $timeout, $ionicModal, DBFactory) {
@@ -212,8 +258,22 @@ angular.module('starter.controllers', [])
     });
 
     $scope.showServiceDetails = function(id) {
-        $scope.requestId = id;
-        $scope.serviceModal.show();
+        DBFactory.getRequest(id).then(function(request) {
+            if (request != null) {
+                $scope.request = {
+                    "id": request.id,
+                    "provider": request.provider,
+                    "consumer": request.consumer,
+                    "fees": request.fees,
+                    "paid": request.paid,
+                    "received": request.received,
+                    "status": request.status,
+                    "dateTime": request.dateTime,
+                    "comments": request.comments
+                };
+                $scope.serviceModal.show();
+            }
+        });
     };
 
     $scope.closeServiceDetails = function() {
@@ -222,7 +282,18 @@ angular.module('starter.controllers', [])
 
     $scope.updateService = function() {
         $timeout(function() {
-            $scope.closeServiceDetails();
+            //alert($scope.request.rating)
+            var paid = $scope.request.paid;
+            var received = $scope.request.received;
+            if ($scope.request.payment == "paid") {
+                paid = 1;
+            }
+            if ($scope.request.payment == "received") {
+                received = 1;
+            }
+            DBFactory.updateRequest($scope.request.id, $scope.request.status, $scope.request.fees, paid, received).then(function() {
+                $scope.closeServiceDetails();
+            });
         }, 500);
     };
 })

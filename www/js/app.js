@@ -64,6 +64,19 @@ app.constant("DB_CONFIG", {
                 name: "comments",
                 type: "text"
             }]
+        },
+        {
+            name: "feedback_info",
+            columns: [{
+                name: "requestid",
+                type: "text"
+            }, {
+                name: "username",
+                type: "text"
+            }, {
+                name: "rating",
+                type: "text"
+            }]
         }
     ]
 });
@@ -310,6 +323,18 @@ app.factory("DBFactory", function($q, DB) {
             .then(function(result) {
                 return DB.fetchAll(result);
             });
+    };
+
+    self.getRequest = function(id) {
+        return DB.query("SELECT * FROM request_info5 where id='" + id + "'")
+            .then(function(result) {
+                return DB.fetch(result);
+            });
+    };
+
+    self.updateRequest = function(id, status, fees, paid, received) {
+        var today = new Date();
+        return DB.query("UPDATE request_info5 SET status=?, fees=?, paid=?, received=? WHERE id=?", [status, fees, paid, received, id]);
     };
 
     return self;

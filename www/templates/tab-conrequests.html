@@ -5,9 +5,10 @@
                 <img src="img/user_x.png">
                 <h2>{{request.provider}}</h2>
                 <p>{{request.dateTime}}</p>
+                <img src="img/call.png" height="20px">
             </div>
             <div class="item item-body">
-                <p>{{request.comments}}</p>
+                <p><a ng-click="showServiceDetails({{request.id}})">{{request.comments}}</a></p>
                 <p>
                     <a href="#" class="subdued">{{request.status}}</a>
                     <a href="#" class="subdued">Paid Amount: {{request.fees}}</a>

@@ -11,13 +11,50 @@
             <div class="list">
                 <label class="item item-input">
                     <span class="input-label">Id</span>
-                    <input type="text" ng-model="requestId">
+                    <input type="text" ng-model="request.id" readonly>
                 </label>
-
+                <label class="item item-input">
+                    <span class="input-label">Consumer</span>
+                    <input type="text" ng-model="request.consumer" readonly>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Comments</span>
+                    <textarea rows="3" ng-model="request.comments" readonly></textarea>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Date/Time</span>
+                    <input type="text" ng-model="request.dateTime" readonly>
+                </label>
+                <label class="item item-input" ng-show="request.status != 'completed'">
+                    <span class="input-label">Action</span>
+                    <select ng-model="request.status">
+                        <option value="accepted" ng-if="loggedIn.role=='Provider'">Accept</option>
+                        <option value="declined" ng-if="loggedIn.role=='Provider'">Decline</option>
+                        <option value="completed" ng-if="loggedIn.role=='Consumer'">Completed</option>
+                        <!--option value="rejected" ng-if="loggedIn.role=='Consumer'">Rejected</option-->
+                    </select>
+                </label>
+                <label class="item item-input" ng-show="request.status == 'accepted'">
+                    <span class="input-label">Fees</span>
+                    <input type="text" ng-model="request.fees">
+                </label>
+                <label class="item item-input" ng-show="request.status == 'completed'">
+                    <span class="input-label">Payment</span>
+                    <select ng-model="request.payment">
+                        <option value="paid" ng-if="loggedIn.role=='Consumer'">Paid</option>
+                        <option value="received" ng-if="loggedIn.role=='Provider'">Received</option>
+                    </select>
+                </label>
+                <label class="item" ng-show="request.status == 'completed'">
+                    <span class="input-label">Rating</span>
+                        <div class="item range range-positive">
+                            <input type="range" ng-model="request.rating" min="1" max="5" value="3">
+                        </div>
+                </label>
                 <label class="item">
                     <center>
-                    <button class="button button-balanced" type="submit">Save</button>
-                    <button class="button button-energized">Cancel</button>
+                        <button class="button button-balanced" type="submit">Save</button>
+                        <button class="button button-energized" ng-click="closeServiceDetails()">Cancel</button>
                     </center>
                 </label>
             </div>
