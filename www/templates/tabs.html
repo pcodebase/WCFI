@@ -5,20 +5,36 @@ navigation history that also transitions its views in and out.
 -->
 <ion-tabs class="tabs-icon-top tabs-color-active-positive">
 
-  <!-- Dashboard Tab -->
-  <ion-tab title="Status" icon-off="ion-ios-pulse" icon-on="ion-ios-pulse-strong" href="#/tab/dash">
-    <ion-nav-view name="tab-dash"></ion-nav-view>
-  </ion-tab>
+    <ion-tab title="Home" icon-off="ion-ios-home" icon-on="ion-ios-home" href="#/tab/dash">
+        <ion-nav-view name="tab-dash"></ion-nav-view>
+    </ion-tab>
 
-  <!-- Chats Tab -->
-  <ion-tab title="Chats" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/tab/chats">
-    <ion-nav-view name="tab-chats"></ion-nav-view>
-  </ion-tab>
+    <ion-tab title="Add" icon-off="ion-plus-round" icon-on="ion-plus-round" href="#/tab/pronewservice" ng-if="loggedIn.role=='Provider'">
+        <ion-nav-view name="tab-pronewservice"></ion-nav-view>
+    </ion-tab>
 
-  <!-- Account Tab -->
-  <ion-tab title="Account" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/tab/account">
-    <ion-nav-view name="tab-account"></ion-nav-view>
-  </ion-tab>
+    <ion-tab title="My Requests" icon-off="ion-checkmark" icon-on="ion-checkmark" href="#/tab/prorequests" ng-if="loggedIn.role=='Provider'">
+        <ion-nav-view name="tab-prorequests"></ion-nav-view>
+    </ion-tab>
 
+    <ion-tab title="Services" icon-off="ion-map" icon-on="ion-map" href="#/tab/services" ng-if="loggedIn.role=='Consumer'">
+        <ion-nav-view name="tab-services"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="My Requests" icon-off="ion-checkmark" icon-on="ion-checkmark" href="#/tab/conrequests" ng-if="loggedIn.role=='Consumer'">
+        <ion-nav-view name="tab-conrequests"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="Notifications" icon-off="ion-alert" icon-on="ion-alert" href="#/tab/alerts" ng-if="loggedIn.role">
+        <ion-nav-view name="tab-alerts"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="Help" icon-off="ion-ios-chatboxes-outline" icon-on="ion-ios-chatboxes" href="#/tab/chats">
+        <ion-nav-view name="tab-chats"></ion-nav-view>
+    </ion-tab>
+
+    <ion-tab title="Settings" icon-off="ion-ios-gear-outline" icon-on="ion-ios-gear" href="#/tab/account" ng-if="loggedIn.role">
+        <ion-nav-view name="tab-account"></ion-nav-view>
+    </ion-tab>
 
 </ion-tabs>

@@ -5,81 +5,193 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+var app = angular.module('starter', ['ionic', 'starter.controllers', 'starter.services']);
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
+app.constant("DB_CONFIG", {
+    name: "WCFIDB",
+    tables: [{
+        name: "user_info",
+        columns: [{
+            name: "username",
+            type: "text primary key"
+        }, {
+            name: "name",
+            type: "text"
+        }, {
+            name: "password",
+            type: "text"
+        }, {
+            name: "role",
+            type: "text"
+        }, {
+            name: "phoneNo",
+            type: "text"
+        }, {
+            name: "specialization",
+            type: "text"
+        }]
+    }]
+});
 
-    }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
-})
+app.run(function($ionicPlatform, DB, DBFactory) {
+    $ionicPlatform.ready(function() {
+        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+        // for form inputs)
+        if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+            cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            cordova.plugins.Keyboard.disableScroll(true);
 
-.config(function($stateProvider, $urlRouterProvider) {
-
-  // Ionic uses AngularUI Router which uses the concept of states
-  // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
-  $stateProvider
-
-  // setup an abstract state for the tabs directive
-    .state('tab', {
-    url: '/tab',
-    abstract: true,
-    templateUrl: 'templates/tabs.html'
-  })
-
-  // Each tab has its own nav history stack:
-
-  .state('tab.dash', {
-    url: '/dash',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
-    }
-  })
-
-  .state('tab.chats', {
-      url: '/chats',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/tab-chats.html',
-          controller: 'ChatsCtrl'
         }
-      }
-    })
-    .state('tab.chat-detail', {
-      url: '/chats/:chatId',
-      views: {
-        'tab-chats': {
-          templateUrl: 'templates/chat-detail.html',
-          controller: 'ChatDetailCtrl'
+        if (window.StatusBar) {
+            // org.apache.cordova.statusbar required
+            StatusBar.styleDefault();
         }
-      }
+        DB.init();
+    });
+});
+
+app.config(function($stateProvider, $urlRouterProvider) {
+
+    // Ionic uses AngularUI Router which uses the concept of states
+    // Learn more here: https://github.com/angular-ui/ui-router
+    // Set up the various states which the app can be in.
+    // Each state's controller can be found in controllers.js
+    $stateProvider
+
+    // setup an abstract state for the tabs directive
+        .state('tab', {
+        url: '/tab',
+        abstract: true,
+        templateUrl: 'templates/tabs.html'
     })
 
-  .state('tab.account', {
-    url: '/account',
-    views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
-      }
-    }
-  });
+    // Each tab has its own nav history stack:
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/tab/dash');
+    .state('tab.dash', {
+        url: '/dash',
+        views: {
+            'tab-dash': {
+                templateUrl: 'templates/tab-dash.html',
+                controller: 'DashCtrl'
+            }
+        }
+    })
 
+    .state('tab.chats', {
+            url: '/chats',
+            views: {
+                'tab-chats': {
+                    templateUrl: 'templates/tab-chats.html',
+                    controller: 'ChatsCtrl'
+                }
+            }
+        })
+        .state('tab.chat-detail', {
+            url: '/chats/:chatId',
+            views: {
+                'tab-chats': {
+                    templateUrl: 'templates/chat-detail.html',
+                    controller: 'ChatDetailCtrl'
+                }
+            }
+        })
+
+    .state('tab.account', {
+        url: '/account',
+        views: {
+            'tab-account': {
+                templateUrl: 'templates/tab-account.html',
+                controller: 'AccountCtrl'
+            }
+        }
+    });
+
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/tab/dash');
+
+});
+
+app.factory("DB", function($q, DB_CONFIG) {
+    var self = this;
+    self.db = null;
+    self.init = function() {
+        self.db = window.openDatabase(DB_CONFIG.name, "1.0", "database", 655367);
+        angular.forEach(DB_CONFIG.tables, function(table) {
+            var columns = [];
+            angular.forEach(table.columns, function(column) {
+                columns.push(column.name + ' ' + column.type);
+            });
+            var query = "CREATE TABLE IF NOT EXISTS " + table.name + " (" + columns.join(",") + ")";
+            var test = self.query(query);
+        });
+    };
+
+    self.query = function(query, bindings) {
+        console.log("DB.query: " + query);
+        bindings = typeof bindings !== "undefined" ? bindings : [];
+        var deferred = $q.defer();
+        self.db.transaction(function(transaction) {
+            transaction.executeSql(query, bindings, function(transaction, result) {
+                deferred.resolve(result);
+            }, function(transaction, error) {
+                console.log("query: " + query + "error: " + error.code + ", " + error.message);
+                deferred.reject(error);
+            });
+        });
+        return deferred.promise;
+    };
+
+    self.fetchAll = function(result) {
+        var output = [];
+        for (var i = 0; i < result.rows.length; i++) {
+            output.push(result.rows.item(i));
+        }
+        return output;
+    };
+
+    self.fetch = function(result) {
+        var output = null;
+        if (result.rows.length == 1) {
+            output = angular.copy(result.rows.item(0));
+        }
+        return output;
+    };
+
+    return self;
+});
+
+app.factory("DBFactory", function($q, DB) {
+    var self = this;
+    self.addUser = function(userData) {
+        var deferred = $q.defer();
+        var promises = [];
+        var username = userData.username;
+        var name = userData.name;
+        var password = userData.password;
+        var role = userData.role;
+        var phoneNo = userData.phoneNo;
+        var specialization = userData.specialization;
+
+        promises.push(DB.query("INSERT INTO user_info (username, name, password, role, phoneNo, specialization) VALUES ('" + username + "', '" + name + "', '" + password + "', '" + role + "', '" + phoneNo + "', '" + specialization + "')"));
+        $q.all(promises).then(function() {
+            deferred.resolve(true);
+        });
+        return deferred.promise;
+    };
+
+    self.allUsers = function() {
+        return DB.query("SELECT * FROM user_info")
+            .then(function(result) {
+                return DB.fetchAll(result);
+            });
+    };
+
+    self.getUser = function(username) {
+        return DB.query("SELECT username, password, name, role, phoneNo, specialization FROM user_info WHERE username = '" + username + "'")
+            .then(function(result) {
+                return DB.fetch(result);
+            });
+    };
+
+    return self;
 });
